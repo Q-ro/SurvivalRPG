@@ -74,7 +74,7 @@ public abstract class MovingObject : MonoBehaviour {
     }
 
 
-    protected virtual void OnCantMove<T>(T component)
+    protected abstract void OnCantMove<T>(T component)
            where T : Component;
 	
 	// Update is called once per frame

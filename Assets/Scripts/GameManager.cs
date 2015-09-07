@@ -7,9 +7,21 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance = null;
     //A refference to board manager, used to set up the level
     public BoardManager boardScript;
+
+    public int playerFoodPoints = 100;
+    public int playerHealthPoints = 100;
+    public int playerStaminaPoints = 100;
+
+    [HideInInspector]
+    public bool PlayersTurn = true;
+
+
     //The current game level (set to 2 to spawn at least 1 enemy on the first screen)
     public int level = 2;
 
+    /// <summary>
+    /// 
+    /// </summary>
     void Awake()
     {
         //If there is no previous instance, make this the instance
@@ -32,8 +44,10 @@ public class GameManager : MonoBehaviour {
         //Initialize the game
         InitGame();
     }
+
+
     /// <summary>
-    /// Initializes the game for each level.
+    /// Initializes the board for each level.
     /// </summary>
     void InitGame()
     {
@@ -41,6 +55,13 @@ public class GameManager : MonoBehaviour {
         boardScript.SetUpScene(level);
     }
 
+    /// <summary>
+    /// Triggers when the player dies, displays the game over screen
+    /// </summary>
+    public void GameOver()
+    {
+        enabled = false;
+    }
 	// Use this for initialization
 	void Start () {
 	

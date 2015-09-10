@@ -3,15 +3,16 @@ using System.Collections;
 
 public class Player : MovingObject {
 
-    // How much dmg the player deals to destructible objects
+	int horizontal = 0, vertical = 0;
+	// How much dmg the player deals to destructible objects
     public int objectDamage = 1;
     //The amount of points refilled by collecting edible items
     public int pointsPerFood = 10;
     public int pointsPersoda = 20;
-    //Delay to be used when restarting a level
-    public float restartLevelDelay = 1f;
+    //Delay to be used when adavancing to the next level
+    public float nextLevelDelay = 1f;
 
-    //An instance to our animator, to be able to switch between the different animations
+    //Store an instance to our animator, to be able to switch between the different animations
     private Animator animator;
 
     //Store the current "hunger" level of the player
@@ -85,13 +86,14 @@ public class Player : MovingObject {
 	// Update is called once per frame
 	void Update () 
     {
-        int horizontal = 0;
-        int vertical = 0;
+		//Skip the update cycle if it's not the players turn yet
+        if (!GameManager.instance.PlayersTurn) 
+		{
+			return;
+		}
 
-        if (GameManager.instance.PlayersTurn) return;
-
-        horizontal = (int)Input.GetAxis("Horizontal");
-        vertical = (int)Input.GetAxis("Vertical");
+		horizontal 	= 	(int)Input.GetAxisRaw ("Horizontal");
+		vertical	=	(int)Input.GetAxisRaw ("Vertical");
 
         //Lock the movement to X and Y axis (no vertical movement)
         if(horizontal !=0)
@@ -107,6 +109,9 @@ public class Player : MovingObject {
         {
             AttempMove<DesturctibleTerrain>(horizontal, vertical);
         }
+
+		//"reset" player's movement
+		//horizontal = 0, vertical = 0;
 	}
 
     protected override void OnCantMove <T> (T component)
@@ -129,7 +134,41 @@ public class Player : MovingObject {
         Application.LoadLevel(Application.loadedLevel);
     }
 
-    private void LoseFood(int loss)
+	/// <summary>
+	/// Check 2D Collision with scene triggers (such as exit)
+	/// </summary>
+	/// <param name="trigger">the trigger being hit</param>
+	private void OnTriggerEnter2D (Collider2D trigger)
+	{
+		//Advance to the next level if the trigger is an exit
+		if (trigger.tag == "Exit") {
+			//Start the next level after a short delay
+			Invoke ("NextLevel", nextLevelDelay);
+
+
+			//Disables the player object since the level is over
+			enabled = false;
+		} 
+		//Replenish the player's food meter
+		else if (trigger.tag == "Food") {
+			food += pointsPerFood;
+			//Disable the item
+			trigger.gameObject.SetActive (false);
+		}
+		//Replenish the player's stamina meter
+		else if (trigger.tag == "Soda") 
+		{
+			stamina += pointsPersoda;
+			//Disable the item
+			trigger.gameObject.SetActive (false);
+		}
+	}
+
+	/// <summary>
+	/// Manages the hunger meter
+	/// </summary>
+	/// <param name="loss">How much food is lost</param>
+    public void LoseFood(int loss)
     {
         animator.SetTrigger("playerHit");
 

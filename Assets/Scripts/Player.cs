@@ -1,26 +1,55 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Player : MovingObject {
 
-	int horizontal = 0, vertical = 0;
-	// How much dmg the player deals to destructible objects
-    public int objectDamage = 1;
+	int horizontal = 0, vertical = 0;   // A flag that keeps track of player's movement orientation
+    public int objectDamage = 1;        // How much dmg the player deals to destructible objects
+
     //The amount of points refilled by collecting edible items
     public int pointsPerFood = 10;
     public int pointsPersoda = 20;
-    //Delay to be used when adavancing to the next level
-    public float nextLevelDelay = 1f;
 
-    //Store an instance to our animator, to be able to switch between the different animations
-    private Animator animator;
+    public float nextLevelDelay = 1f;   // Delay to be used when adavancing to the next level
+    private Animator animator;          // Store an instance to our animator, to be able to switch between the different animations
 
-    //Store the current "hunger" level of the player
-    private int food;
-    //Stores the health level of the player
-    private int health;
-    //Sotres the stamina level of the player
-    private int stamina;
+    // Sound effects
+    public AudioClip moveSound1;
+    public AudioClip moveSound2;
+
+    public AudioClip damagedSound1;
+    public AudioClip damagedSound2;
+
+    public AudioClip pickupSound;
+    public AudioClip eatSound1;
+    public AudioClip eatSound2;
+    public AudioClip drinkSound1;
+    public AudioClip drinkSound2;
+    public AudioClip gameOverSound;
+    public AudioClip nextlevelSound;
+
+    //Player stats
+    // Stores the current "hunger" level of the player
+    private int _food;
+    
+    public int food
+    {
+        get { return _food; }
+        private set { _food = value; foodText.text = "Food " + food; }
+    }
+
+    private int _health;                 // Stores the health level of the player
+    public int health
+    {
+        get { return _health; }
+        private set { _health = value; healthText.text = "Health " + _health; }
+    } 
+       
+    private int stamina;                // Stores the stamina level of the player
+
+    public Text foodText;
+    public Text healthText;
 
 	/// <summary>
 	/// Initialize player specific logic 
@@ -32,6 +61,8 @@ public class Player : MovingObject {
 
         //Get the Player's "hunger" level between levels
         food = GameManager.instance.playerFoodPoints;
+        health = GameManager.instance.playerHealthPoints;
+        stamina = GameManager.instance.playerStaminaPoints;
 
         //Continue with the inizialization process on the base class
         base.Start();
@@ -56,7 +87,7 @@ public class Player : MovingObject {
         RaycastHit2D hit;
 
         //Movement cost 1 food point
-        if (food >= 0)
+        if (food > 0)
         {
             food--;
         }
@@ -69,9 +100,16 @@ public class Player : MovingObject {
         }
 
         base.AttempMove<T>(xDireccion, yDireccion);
+
+        // If the player was able to take a step
+        if(Move(xDireccion,yDireccion,out hit))
+        {
+            // then play a random step soundeffect from the list
+            //SoundManager.instance.RandomSFX(moveSound1, moveSound2);
+        }
         
         //The player's turn ends after 1 movement
-        GameManager.instance.PlayersTurn = false;
+        GameManager.instance.playersTurn = false;
 
     }
 
@@ -79,6 +117,8 @@ public class Player : MovingObject {
     {
         if(health <= 0)
         {
+            SoundManager.instance.musicSource.Stop();
+            SoundManager.instance.PlaySingle(gameOverSound);
             GameManager.instance.GameOver();
         }
     }
@@ -87,7 +127,7 @@ public class Player : MovingObject {
 	void Update () 
     {
 		//Skip the update cycle if it's not the players turn yet
-        if (!GameManager.instance.PlayersTurn) 
+        if (!GameManager.instance.playersTurn) 
 		{
 			return;
 		}
@@ -111,7 +151,8 @@ public class Player : MovingObject {
         }
 
 		//"reset" player's movement
-		//horizontal = 0, vertical = 0;
+        //horizontal = 0;
+        //vertical = 0;
 	}
 
     protected override void OnCantMove <T> (T component)
@@ -123,7 +164,7 @@ public class Player : MovingObject {
         hitObstacle.DamageObject(objectDamage);
 
         //Switch the animator state to chop
-        animator.SetTrigger("playerChop");
+        animator.SetTrigger("PlayerChop");
     }
 
     /// <summary>
@@ -141,17 +182,21 @@ public class Player : MovingObject {
 	private void OnTriggerEnter2D (Collider2D trigger)
 	{
 		//Advance to the next level if the trigger is an exit
-		if (trigger.tag == "Exit") {
+		if (trigger.tag == "Exit") 
+        {
 			//Start the next level after a short delay
 			Invoke ("NextLevel", nextLevelDelay);
 
-
+            SoundManager.instance.PlaySingle(nextlevelSound);
 			//Disables the player object since the level is over
 			enabled = false;
 		} 
 		//Replenish the player's food meter
-		else if (trigger.tag == "Food") {
+		else if (trigger.tag == "Food")
+        {
 			food += pointsPerFood;
+            SoundManager.instance.PlaySingle(pickupSound);
+
 			//Disable the item
 			trigger.gameObject.SetActive (false);
 		}
@@ -159,6 +204,8 @@ public class Player : MovingObject {
 		else if (trigger.tag == "Soda") 
 		{
 			stamina += pointsPersoda;
+            SoundManager.instance.PlaySingle(pickupSound);
+
 			//Disable the item
 			trigger.gameObject.SetActive (false);
 		}
@@ -170,11 +217,27 @@ public class Player : MovingObject {
 	/// <param name="loss">How much food is lost</param>
     public void LoseFood(int loss)
     {
-        animator.SetTrigger("playerHit");
+        animator.SetTrigger("PlayerHit");
+        SoundManager.instance.RandomSFX(damagedSound1, damagedSound2);
 
-        if (food >= 0)
+        if (food > 0)
         {
-            food-= loss;
+            // If the food lost  diferential is more than or equal to zero, decrese player's food level
+            if(food - loss >= 0)
+            {
+                food -= loss;
+
+            }
+            // Else set Food to Zero and damage the player by the residue of the operation
+            else 
+            {
+                int residualDamage = loss - food;
+                health -= residualDamage;
+                food = 0;
+                //Check is he died from taking too much damage
+                CheckGameOver();
+            }
+            
         }
         //If the player is starving, he gets hurt instead
         else

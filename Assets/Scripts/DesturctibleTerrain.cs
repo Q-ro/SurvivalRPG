@@ -8,6 +8,9 @@ public class DesturctibleTerrain : MonoBehaviour {
     //The object health
     public int hp = 4;
 
+    public AudioClip chopSound1;
+    public AudioClip chopSound2;
+
     private SpriteRenderer spriteRenderer;
 
     void Awake()
@@ -17,6 +20,7 @@ public class DesturctibleTerrain : MonoBehaviour {
 
     public void DamageObject(int loss)
     {
+        SoundManager.instance.RandomSFX(chopSound1, chopSound2);
         spriteRenderer.sprite = dmgsprite;
         //Remove health acordingly
         hp -= loss;

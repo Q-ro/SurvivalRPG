@@ -51,6 +51,8 @@ public class Player : MovingObject {
     public Text foodText;
     public Text healthText;
 
+    private Vector2 touchOrigin = -Vector2.one;
+
 	/// <summary>
 	/// Initialize player specific logic 
 	/// </summary>
@@ -135,6 +137,8 @@ public class Player : MovingObject {
 		horizontal 	= 	(int)Input.GetAxisRaw ("Horizontal");
 		vertical	=	(int)Input.GetAxisRaw ("Vertical");
 
+        #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+
         //Lock the movement to X and Y axis (no vertical movement)
         if(horizontal !=0)
         {
@@ -144,6 +148,50 @@ public class Player : MovingObject {
         //{
         //    horizontal = 0;
         //}
+
+        #else
+
+        if(Input.touchCount > 0)
+        {
+            Touch myTouch = Input.touches[0];
+
+            if(myTouch.phase == TouchPhase.Began)
+            {
+                touchOrigin = myTouch.position;
+            }
+            else if(myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0)
+            {
+                Vector2 touchEnd = myTouch.position;
+                float x = touchEnd.x - touchOrigin.x;
+                float y = touchEnd.y - touchOrigin.y;
+                touchOrigin.x = -1;
+                if(Mathf.Abs(x) > Mathf.Abs(y))
+                {
+                    if (x > 0)
+                    {
+                        horizontal = 1;
+                    }
+                    else
+                    {
+                        horizontal = -1;
+                    }
+                        
+                }
+                else
+                {
+                    if (y > 0)
+                    {
+                        vertical = 1;
+                    }
+                    else
+                    {
+                        vertical = -1;
+                    }
+                }
+            }
+        }
+
+        #endif
 
         if(horizontal !=0 || vertical != 0)
         {

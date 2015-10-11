@@ -1,23 +1,23 @@
 ## Synopsis
 
-A simple solar system simulation powered by unity and C# scripting, this started as a very simple homework excersice developed for week one of Corsera's MOOC titled ["Introduction to Game Development"](https://www.coursera.org/learn/game-development/home/welcome), but i ended up adding more and more stuff to make it more interesting.
+A “Survival” RPG game powered by unity and C# scripting, this started as a very simple attempt to get into programming a “commercial” game using the “turn base tutorial” game assets provided by unity. Although still incomplete, the game will feature turn base combat, randomly generated floors, a fully fledge story (already planned, but not implemented), towns and NPCs, limited resources, player status and ailment, toughs decisions, and so on.
 
 ## Motivation
 
-I just wanted to apply the concepts learned through the course to make the first "game" we developed a more pleasing experience, and i think the final result is indeed quite pleasing.
+I wanted to create a game on the style of my favourite games while trying to bring something new to the gameplay, although play testing will be required to balance some of the elements once game is somewhat done, i think the concept is on the very least interesting.
 
 ## Installation
 
-You can download the whole project as a zip, unzip it, and open it with unity, if you want to see the game in action, the "Build" folder contains a WebBuild, download the folder, and double click the html file, the browser will load the page and then load the game using unity web player (bear in mind, i't will not work with chrome).
+You can download the whole project as a zip, unzip it, and open it with unity, if you want to see the game in action, the "Build" folder contains a Standalone folder, one for each system, download the folder of your system, and double click the file to play (once the game is completed you will be able to grab it from steam’s shop, steam features will be added to the game).
 
 ## Disclaimer
 
-I tried to make it a very accurate reprensentation of the solar system, but there are still some missing elements that i may add in the future, such Saturn's rings, or the asteroid belt that separated the inner and outter planets.
+The game is still on development, everything but the main character art is not final (and he still can be changed change), sooty is still not implemented, for now the main focus of the game is implementation of the game mechanics.
 
 ## Special thanks
 
-Special thanks to NASA for the pictures, to [Brian Winn]{http://gel.msu.edu/winn/} my teacher for the course and creator of some of the scripts used in this project, and to [meowtek]{http://freesound.org/people/meowtek/sounds/69317/} and [reacthor]{http://freesound.org/people/reacthor/sounds/238026/} for the music
+Special thanks to Unity for the awesome tutorial that allowed me to get the project started and seven for inspiration for the project’s direction.
 
 ## License
 
-This project is under Creative Common 3.0 license (Atributtion, Non-Comercial, Share Alike) [CC 3.0 (BY-NC,SA)]
+This project was created by Andres Mrad (Q-ro) and is licensed under Creative Common 3.0 license (Attribution, Non-Comercial, Share Alike) [CC 3.0 (BY-NC,SA)]

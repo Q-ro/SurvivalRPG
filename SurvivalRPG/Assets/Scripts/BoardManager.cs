@@ -20,8 +20,8 @@ public class BoardManager : MonoBehaviour {
     }
 
     //Amount of rows and columns for the game board
-    public int columns = 8;
-    public int rows = 8;
+    public int columns = 10;
+    public int rows = 10;
 
     //Range of wall obstacles to spawn
     public Count wallCount = new Count(5, 9);

@@ -232,12 +232,19 @@ public class Player : MovingObject {
 		//Advance to the next level if the trigger is an exit
 		if (trigger.tag == "Exit") 
         {
+			//Disables the player object since the level is over
+			enabled = false;
+			SoundManager.instance.PlaySingle(nextlevelSound);
+
 			//Start the next level after a short delay
 			Invoke ("NextLevel", nextLevelDelay);
 
-            SoundManager.instance.PlaySingle(nextlevelSound);
-			//Disables the player object since the level is over
-			enabled = false;
+
+
+			//GameManager.instance.LoadDungeonLevel();
+
+            
+
 		} 
 		//Replenish the player's food meter
 		else if (trigger.tag == "Food")

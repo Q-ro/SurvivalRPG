@@ -12,7 +12,7 @@ You can download the whole project as a zip, unzip it, and open it with unity, i
 
 ## Disclaimer
 
-The game is still on development, everything but the main character art is not final (and he still can be changed change), sooty is still not implemented, for now the main focus of the game is implementation of the game mechanics.
+The game is still on development, everything but the main character art is not final (and he still can be changed change), story is still not implemented, for now the main focus of the game is implementation of the game mechanics.
 
 ## Special thanks
 
@@ -20,4 +20,4 @@ Special thanks to Unity for the awesome tutorial that allowed me to get the proj
 
 ## License
 
-This project was created by Andres Mrad (Q-ro) and is licensed under Creative Common 3.0 license (Attribution, Non-Comercial, Share Alike) [CC 3.0 (BY-NC,SA)]
+This project was created by Andres Mrad (Q-ro) and is licensed under Creative Common 3.0 license (Attribution, Non-Comercial, Share Alike) [CC 3.0 (BY-NC-SA)]

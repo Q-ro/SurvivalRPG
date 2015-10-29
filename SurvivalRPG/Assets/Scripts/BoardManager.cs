@@ -45,6 +45,7 @@ public class BoardManager : MonoBehaviour {
     //A parent for our game objects, used to store refferences to the transform of our game objects
     //as well as for cleanliness sake
     private Transform boardHolder;
+	private Transform boardPiecesHolder;
 
     //A gird of all the vailable positions to spawn object into
     private List<Vector3> gridPositions = new List<Vector3>();
@@ -158,8 +159,12 @@ public class BoardManager : MonoBehaviour {
             //choose a random tile
             tileChoice = tileArray[Random.Range(0, tileArray.Length)];
 
-            //Instantiate the tile choosen at an abailable position
-            Instantiate(tileChoice, randomPosition, Quaternion.identity);
+			//Instantiate the tile choosen at an abailable position
+			GameObject instance = Instantiate(tileChoice, randomPosition, Quaternion.identity) as GameObject;
+			
+			//Set the parent of our instantiated object to boardHolder, this is just organizational to avoid cluttering hierarchy.
+			instance.transform.SetParent(boardPiecesHolder);           
+            
         }
     }
 
@@ -170,10 +175,10 @@ public class BoardManager : MonoBehaviour {
     {
 		//Instantiate player
 		if (!GameObject.FindWithTag("Player")) {
-			Debug.Log("no player");
+
 			player = Instantiate (player, new Vector3 (0, 0, 0), Quaternion.identity) as GameObject;
 		} else {
-			Debug.Log ("a player");
+
 			player.transform.position = new Vector3 (0, 0, 0);
 		}
 		//var f = playerInstance.GetComponent<Player>();
@@ -185,6 +190,8 @@ public class BoardManager : MonoBehaviour {
 
         // Setup a list of all available spaces to spawn object into
         InitializeList();
+
+		SetUpPieces ();
 
         //Instantiate a random amount of walls
         LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum);
@@ -200,16 +207,32 @@ public class BoardManager : MonoBehaviour {
         LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
 
         //Instantiate the exit on the upper rigth corner
-        Instantiate(exit, new Vector3(columns - 1, rows - 1, 0f), Quaternion.identity);
+		GameObject instance = Instantiate(exit, new Vector3(columns - 1, rows - 1, 0f), Quaternion.identity) as GameObject;
 
-        
+		instance.transform.SetParent(boardPiecesHolder);    
 
 
     }
 
+	void SetUpPieces()
+	{
+		if (!boardPiecesHolder)
+		{
+			Debug.Log("no pieces");
+			boardPiecesHolder = new GameObject ("BoardPieces").transform;
+		} 
+		else 
+		{
+			Debug.Log("yes pieces");
+			Destroy(GameObject.Find("BoardPieces"));
+			boardPiecesHolder = new GameObject ("BoardPieces").transform;
+		}
+	}
+
 	// Use this for initialization
 	void Start () 
     {
+
 	
 	}
 	

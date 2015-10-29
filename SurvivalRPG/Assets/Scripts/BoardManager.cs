@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 public class BoardManager : MonoBehaviour {
 
@@ -20,8 +21,8 @@ public class BoardManager : MonoBehaviour {
     }
 
     //Amount of rows and columns for the game board
-    public int columns = 10;
-    public int rows = 10;
+    public int columns = 8;
+    public int rows = 8;
 
     //Range of wall obstacles to spawn
     public Count wallCount = new Count(5, 9);
@@ -30,6 +31,9 @@ public class BoardManager : MonoBehaviour {
 
     // Prefab to spawn for exit
     public GameObject exit; 
+
+    // Prayer prefab
+    public GameObject player;
 
     //Arrays of Game objects to be used
     public GameObject[] floorTiles;
@@ -41,6 +45,7 @@ public class BoardManager : MonoBehaviour {
     //A parent for our game objects, used to store refferences to the transform of our game objects
     //as well as for cleanliness sake
     private Transform boardHolder;
+	private Transform boardPiecesHolder;
 
     //A gird of all the vailable positions to spawn object into
     private List<Vector3> gridPositions = new List<Vector3>();
@@ -74,7 +79,15 @@ public class BoardManager : MonoBehaviour {
         GameObject toInstantiate;
 
         // Instantiate Board and set boardHolder to its transform
-        boardHolder = new GameObject("Board").transform;
+		if (!boardHolder)
+		{
+			boardHolder = new GameObject ("Board").transform;
+		} 
+		else 
+		{
+			Destroy(GameObject.Find("Board"));
+			boardHolder = new GameObject ("Board").transform;
+		}
 
         //Go through all the columns starting with the outter ones (-1)
         for(int x = -1; x < columns+1; x++)
@@ -146,8 +159,12 @@ public class BoardManager : MonoBehaviour {
             //choose a random tile
             tileChoice = tileArray[Random.Range(0, tileArray.Length)];
 
-            //Instantiate the tile choosen at an abailable position
-            Instantiate(tileChoice, randomPosition, Quaternion.identity);
+			//Instantiate the tile choosen at an abailable position
+			GameObject instance = Instantiate(tileChoice, randomPosition, Quaternion.identity) as GameObject;
+			
+			//Set the parent of our instantiated object to boardHolder, this is just organizational to avoid cluttering hierarchy.
+			instance.transform.SetParent(boardPiecesHolder);           
+            
         }
     }
 
@@ -156,12 +173,25 @@ public class BoardManager : MonoBehaviour {
     /// </summary>
     public void SetUpScene(int level)
     {
+		//Instantiate player
+		if (!GameObject.FindWithTag("Player")) {
+
+			player = Instantiate (player, new Vector3 (0, 0, 0), Quaternion.identity) as GameObject;
+		} else {
+
+			player.transform.position = new Vector3 (0, 0, 0);
+		}
+		//var f = playerInstance.GetComponent<Player>();
+		//playerInstance.GetComponent<Player>().foodText = GameObject.Find("FoodText").GetComponent("Text") as Text;
+		//playerInstance.GetComponent<Player>().healthText = GameObject.Find("HealthText").GetComponent("Text") as Text;
 
         // Create the outter walls and floors
         BoarSetup();
 
         // Setup a list of all available spaces to spawn object into
         InitializeList();
+
+		SetUpPieces ();
 
         //Instantiate a random amount of walls
         LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum);
@@ -172,16 +202,37 @@ public class BoardManager : MonoBehaviour {
         //Determine number of enemies based on current level and a logarithmic progression
         int enemyCount = (int)Mathf.Log(level, 2f);
 
+        
         //Instantiate a random number of enemies
         LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
 
         //Instantiate the exit on the upper rigth corner
-        Instantiate(exit, new Vector3(columns - 1, rows - 1, 0f), Quaternion.identity);
+		GameObject instance = Instantiate(exit, new Vector3(columns - 1, rows - 1, 0f), Quaternion.identity) as GameObject;
+
+		instance.transform.SetParent(boardPiecesHolder);    
+
+
     }
+
+	void SetUpPieces()
+	{
+		if (!boardPiecesHolder)
+		{
+			Debug.Log("no pieces");
+			boardPiecesHolder = new GameObject ("BoardPieces").transform;
+		} 
+		else 
+		{
+			Debug.Log("yes pieces");
+			Destroy(GameObject.Find("BoardPieces"));
+			boardPiecesHolder = new GameObject ("BoardPieces").transform;
+		}
+	}
 
 	// Use this for initialization
 	void Start () 
     {
+
 	
 	}
 	

@@ -61,10 +61,15 @@ public class Player : MovingObject {
         //Get the player's animator to be used to trigger animation changes
         animator = GetComponent<Animator>();
 
+        this.foodText = GameObject.Find("FoodText").GetComponent("Text") as Text;
+        this.healthText = GameObject.Find("HealthText").GetComponent("Text") as Text;
+
         //Get the Player's "hunger" level between levels
         food = GameManager.instance.playerFoodPoints;
         health = GameManager.instance.playerHealthPoints;
         stamina = GameManager.instance.playerStaminaPoints;
+
+       
 
         //Continue with the inizialization process on the base class
         base.Start();
@@ -199,8 +204,8 @@ public class Player : MovingObject {
         }
 
 		//"reset" player's movement
-        //horizontal = 0;
-        //vertical = 0;
+//        horizontal = 0;
+//        vertical = 0;
 	}
 
     protected override void OnCantMove <T> (T component)
@@ -220,7 +225,8 @@ public class Player : MovingObject {
     /// </summary>
     private void NextLevel()
     {
-        Application.LoadLevel(Application.loadedLevel);
+        //Application.LoadLevel(Application.loadedLevel);
+		GameManager.instance.loadNextFloor();
     }
 
 	/// <summary>
@@ -233,17 +239,16 @@ public class Player : MovingObject {
 		if (trigger.tag == "Exit") 
         {
 			//Disables the player object since the level is over
-			enabled = false;
-			SoundManager.instance.PlaySingle(nextlevelSound);
+			//this.enabled = false;
+
+			trigger.enabled = false;
+
+			Destroy(trigger);
 
 			//Start the next level after a short delay
 			Invoke ("NextLevel", nextLevelDelay);
 
-
-
-			//GameManager.instance.LoadDungeonLevel();
-
-            
+            SoundManager.instance.PlaySingle(nextlevelSound);
 
 		} 
 		//Replenish the player's food meter

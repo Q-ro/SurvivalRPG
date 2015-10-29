@@ -78,7 +78,15 @@ public class BoardManager : MonoBehaviour {
         GameObject toInstantiate;
 
         // Instantiate Board and set boardHolder to its transform
-        boardHolder = new GameObject("Board").transform;
+		if (!boardHolder)
+		{
+			boardHolder = new GameObject ("Board").transform;
+		} 
+		else 
+		{
+			Destroy(GameObject.Find("Board"));
+			boardHolder = new GameObject ("Board").transform;
+		}
 
         //Go through all the columns starting with the outter ones (-1)
         for(int x = -1; x < columns+1; x++)
@@ -160,6 +168,17 @@ public class BoardManager : MonoBehaviour {
     /// </summary>
     public void SetUpScene(int level)
     {
+		//Instantiate player
+		if (!GameObject.FindWithTag("Player")) {
+			Debug.Log("no player");
+			player = Instantiate (player, new Vector3 (0, 0, 0), Quaternion.identity) as GameObject;
+		} else {
+			Debug.Log ("a player");
+			player.transform.position = new Vector3 (0, 0, 0);
+		}
+		//var f = playerInstance.GetComponent<Player>();
+		//playerInstance.GetComponent<Player>().foodText = GameObject.Find("FoodText").GetComponent("Text") as Text;
+		//playerInstance.GetComponent<Player>().healthText = GameObject.Find("HealthText").GetComponent("Text") as Text;
 
         // Create the outter walls and floors
         BoarSetup();
@@ -176,12 +195,7 @@ public class BoardManager : MonoBehaviour {
         //Determine number of enemies based on current level and a logarithmic progression
         int enemyCount = (int)Mathf.Log(level, 2f);
 
-        //Instantiate player
-        Instantiate(player, new Vector3(0, 0, 0), Quaternion.identity);
-        //var f = playerInstance.GetComponent<Player>();
-        //playerInstance.GetComponent<Player>().foodText = GameObject.Find("FoodText").GetComponent("Text") as Text;
-        //playerInstance.GetComponent<Player>().healthText = GameObject.Find("HealthText").GetComponent("Text") as Text;
-
+        
         //Instantiate a random number of enemies
         LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
 

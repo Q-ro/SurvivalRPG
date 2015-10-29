@@ -71,12 +71,19 @@ public class GameManager : MonoBehaviour {
 
         doingSetup = true;
 
-        // Get a refference to the Level image and text
-        levelImage = GameObject.Find("LevelImage");
-        levelText = GameObject.Find("LevelText").GetComponent<Text>();
+        // Get a reference to the Level image and text
+		if (!levelImage)
+		{
+			levelImage = GameObject.Find ("LevelImage");
+		}
+		levelImage.SetActive(true);
+		if (!levelText)
+		{
+			levelText = GameObject.Find ("LevelText").GetComponent<Text> ();
+		}
         // Set the text to the current game level
         levelText.text = "Floor " + level;
-        levelImage.SetActive(true);
+        
         // remove the "title card" after a short delay
         Invoke("FinishSetup", levelStartDelay);
 

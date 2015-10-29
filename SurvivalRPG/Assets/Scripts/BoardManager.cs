@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 public class BoardManager : MonoBehaviour {
 
@@ -20,8 +21,8 @@ public class BoardManager : MonoBehaviour {
     }
 
     //Amount of rows and columns for the game board
-    public int columns = 10;
-    public int rows = 10;
+    public int columns = 8;
+    public int rows = 8;
 
     //Range of wall obstacles to spawn
     public Count wallCount = new Count(5, 9);
@@ -30,6 +31,9 @@ public class BoardManager : MonoBehaviour {
 
     // Prefab to spawn for exit
     public GameObject exit; 
+
+    // Prayer prefab
+    public GameObject player;
 
     //Arrays of Game objects to be used
     public GameObject[] floorTiles;
@@ -172,11 +176,21 @@ public class BoardManager : MonoBehaviour {
         //Determine number of enemies based on current level and a logarithmic progression
         int enemyCount = (int)Mathf.Log(level, 2f);
 
+        //Instantiate player
+        Instantiate(player, new Vector3(0, 0, 0), Quaternion.identity);
+        //var f = playerInstance.GetComponent<Player>();
+        //playerInstance.GetComponent<Player>().foodText = GameObject.Find("FoodText").GetComponent("Text") as Text;
+        //playerInstance.GetComponent<Player>().healthText = GameObject.Find("HealthText").GetComponent("Text") as Text;
+
         //Instantiate a random number of enemies
         LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
 
         //Instantiate the exit on the upper rigth corner
         Instantiate(exit, new Vector3(columns - 1, rows - 1, 0f), Quaternion.identity);
+
+        
+
+
     }
 
 	// Use this for initialization

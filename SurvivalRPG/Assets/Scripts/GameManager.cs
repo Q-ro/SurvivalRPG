@@ -36,12 +36,14 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void Awake()
     {
+		Debug.Log ("im awake");
+	
         //If there is no previous instance, make this the instance
         if(instance == null)
         {
             instance = this;
         }
-        //If there is already an instances and it's not this, commit suicide.            
+        //If there is already an instances and it's not this, kill it.            
         else if(instance != this)
         {
             Destroy(this);
@@ -65,13 +67,12 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void InitGame()
     {
+		Debug.Log ("Time to roll");
 
         doingSetup = true;
 
         // Get a refference to the Level image and text
-		if(!levelImage)
-			levelImage = GameObject.Find("LevelImage");
-		levelImage.SetActive(true);
+        levelImage = GameObject.Find("LevelImage");
         levelText = GameObject.Find("LevelText").GetComponent<Text>();
         // Set the text to the current game level
         levelText.text = "Floor " + level;
@@ -158,23 +159,20 @@ public class GameManager : MonoBehaviour {
         enemies.Add(enemy);
     }
 
-	public void LoadDungeonLevel()
+	public void loadNextFloor ()
 	{
-		        //Add one to our level number.
-		        level++;
-		        //Call InitGame to initialize our level.
-		        InitGame();
-
-//		Application.LoadLevel(0);
+		//Add one to our level number.
+		level++;
+		//Call InitGame to initialize our level.
+		InitGame();
 	}
-
 
     //This is called each time a scene is loaded.
     void OnLevelWasLoaded(int index)
     {
         //Add one to our level number.
-        level++;
+        //level++;
         //Call InitGame to initialize our level.
-        InitGame();
+        //InitGame();
     }
 }
